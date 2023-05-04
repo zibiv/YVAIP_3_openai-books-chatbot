@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import ChatHeader from "./ChatHeader"
+import ChatInput from "./ChatInput"
 
 const Chat: FC = () => {
   return (
@@ -14,9 +15,11 @@ const Chat: FC = () => {
       <AccordionItem value="item-1">
         <div className="flex flex-col">
           <AccordionContent >
-            <div className="flex flex-col h-80 px-6">sadf</div>
-            
+            <div className="flex flex-col h-80">
+              <ChatInput className="px-4" />
+            </div>
           </AccordionContent>
+          {/* нижняя часть чата которая остается когда чат сворачивается */}
           <AccordionTrigger className="px-6 border-b border-zinc-300">
             <ChatHeader />
           </AccordionTrigger>

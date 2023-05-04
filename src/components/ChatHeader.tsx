@@ -8,7 +8,6 @@ const ChatHeader: FC = () => {
       <div className="flex items-center gap-2">
         <p className="w-2 h-2 bg-green-500 rounded-full"/>
         <p className="font-medium">Bookwise поддержка</p>
-
       </div>
     </div>
   )
