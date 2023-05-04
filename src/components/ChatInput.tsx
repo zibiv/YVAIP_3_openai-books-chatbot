@@ -6,6 +6,7 @@ import { nanoid } from "nanoid"
 import { cn } from "@/lib/utils"
 //инпут который может изменять свои размеры в зависимости от кол-ва текста
 import TextareaAutosize from "react-textarea-autosize"
+import { Message } from "@/lib/validators/message"
 
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -18,23 +19,25 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
     isError,
     error,
   } = useMutation({
-    mutationFn: async (message: {
-      id: string;
-      isUserInput: boolean;
-      text: string;
-  }) => {
+    mutationFn: async (message: Message) => {
       const response = await fetch("/api/message", {
-        method: "POST", 
+        method: "POST",
         headers: {
-          'Content-type': 'application/json'
+          "Content-type": "application/json",
         },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ message }),
       })
-      if(response.ok) return response.body
+      if (response.ok) return response.body
+    },
+    onError: () => {
+
+      console.log("Error")
     },
     onSuccess: () => {
-      console.log('Success')
-    }
+      console.log("Success")
+      setInput("")
+    },
+
   })
 
   return (
@@ -49,14 +52,14 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-            //сообщение отправляется при нажатии одной клавиши enter, без нажатого шифта. 
-            if(e.key === "Enter" && !e.shiftKey) {
+            //сообщение отправляется при нажатии одной клавиши enter, без нажатого шифта.
+            if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault()
 
               const message = {
                 id: nanoid(),
-                isUserInput: true,
-                text: input
+                isUserMessage: true,
+                text: input,
               }
 
               sendMessage(message)
