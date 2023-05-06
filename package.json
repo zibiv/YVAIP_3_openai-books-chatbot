@@ -33,6 +33,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@tanstack/react-query-devtools": "^4.29.6"
+    "@tanstack/react-query-devtools": "^4.29.6",
+    "tailwind-scrollbar": "^3.0.0"
   }
 }
