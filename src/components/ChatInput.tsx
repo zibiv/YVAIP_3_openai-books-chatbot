@@ -1,12 +1,11 @@
 "use client"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { FC, HTMLAttributes, useState } from "react"
-//генерация уникальных id
-import { nanoid } from "nanoid"
 import { cn } from "@/lib/utils"
-//инпут который может изменять свои размеры в зависимости от кол-ва текста
-import TextareaAutosize from "react-textarea-autosize"
 import { Message } from "@/lib/validators/message"
+
+import { nanoid } from "nanoid"
+import TextareaAutosize from "react-textarea-autosize"
 
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -19,6 +18,7 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
     isError,
     error,
   } = useMutation({
+
     mutationFn: async (message: Message) => {
       const response = await fetch("/api/message", {
         method: "POST",
@@ -29,12 +29,21 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
       })
       if (response.ok) return response.body
     },
-    onError: () => {
 
+    onError: () => {
       console.log("Error")
     },
-    onSuccess: () => {
-      console.log("Success")
+
+    onSuccess: async (stream) => {
+      const decoder =new TextDecoder()
+      const reader = stream!.getReader()
+      while(true) {
+        const {done, value} =await reader.read()
+        if(done) {
+          break
+        }
+        console.log(decoder.decode(value))
+      }
       setInput("")
     },
 
@@ -42,7 +51,9 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
 
   return (
     <div className={cn("border-t border-zinc-300 ", className)} {...props}>
+
       <div className="relative mt-4 overflow-hidden rounded-lg border-none outline-none">
+
         <TextareaAutosize
           rows={2}
           maxRows={4}
@@ -52,6 +63,7 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
+
             //сообщение отправляется при нажатии одной клавиши enter, без нажатого шифта.
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault()
@@ -64,10 +76,12 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
 
               sendMessage(message)
             }
+
           }}
         />
       </div>
     </div>
+
   )
 }
 
