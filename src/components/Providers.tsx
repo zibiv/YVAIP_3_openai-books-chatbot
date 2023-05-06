@@ -3,6 +3,7 @@
 import { FC, ReactNode } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import { MessagesArea, MessagesContext } from "@/context/messages"
 
 const queryClient = new QueryClient()
 
@@ -12,10 +13,15 @@ interface ProvidersProps {
 
 const Providers: FC<ProvidersProps> = ({ children }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-      <ReactQueryDevtools />
-    </QueryClientProvider>
+    <MessagesArea>
+      <QueryClientProvider client={queryClient}>
+        {children}
+        <ReactQueryDevtools />
+      </QueryClientProvider>
+    </MessagesArea>
+      
+
+      
   )
 }
 
