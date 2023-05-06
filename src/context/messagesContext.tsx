@@ -33,6 +33,81 @@ export const MessagesArea: FC<{children: ReactNode}> = ({children}) => {
       isUserMessage: false,
       text: "Как я могу вам помочь?",
     },
+    {
+      id: nanoid(),
+      isUserMessage: true,
+      text: "Это я",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: false,
+      text: "Как я могу вам помочь?",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: true,
+      text: "Это я",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: false,
+      text: "Как я могу вам помочь?",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: true,
+      text: "Это я",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: false,
+      text: "Как я могу вам помочь?",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: true,
+      text: "Это я",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: false,
+      text: "Как я могу вам помочь?",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: true,
+      text: "Это я",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: false,
+      text: "Как я могу вам помочь?",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: true,
+      text: "Это я",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: false,
+      text: "Как я могу вам помочь?",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: true,
+      text: "Это я",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: false,
+      text: "Как я могу вам помочь?",
+    },
+    {
+      id: nanoid(),
+      isUserMessage: true,
+      text: "Это я",
+    },
   ])
 
   //добавление сообщения из input, добавляет сообщение в массив сообщений который хранится в состоянии
