@@ -39,6 +39,12 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
       if (response.ok) return response.body
     },
 
+    onMutate: (message) => {
+      //оптимистическое добавление сообщения пользователя
+      addMessage(message)
+
+    },
+
     onError: () => {
       console.log("Error")
     },
@@ -75,6 +81,7 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
       setIsMessageUpdating(false)
       setInput("")
 
+      //FIXME не фокусируется на инпуте
       setTimeout(() => {
         textAreaRef.current?.focus
       }, 10)
@@ -108,7 +115,7 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
               }
 
               sendMessage(message)
-              addMessage(message)
+
             }
 
           }}

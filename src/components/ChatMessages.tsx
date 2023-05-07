@@ -20,11 +20,10 @@ const ChatMessages: FC<ChatMessagesProps> = ({ className, ...props }) => {
   const invertedMessages = messages;
 
   //TODO зачем делать двойной реверс списка сообщений?
-  //TODO исправить зазор между сообщениями
   return (
     <div
       className={cn(
-        "flex flex-col-reverse gap-3 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-green-200",
+        "flex flex-col-reverse gap-3 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-200",
         className
       )}
       {...props}
@@ -40,16 +39,17 @@ const ChatMessages: FC<ChatMessagesProps> = ({ className, ...props }) => {
             >
               <div
                 className={cn(
-                  "flex flex-col  text-sm max-w-sm mx-2 overflow-x-hidden rounded-lg p-2",
+                  "flex flex-col text-sm max-w-sm mx-2 overflow-x-hidden px-4 py-2 rounded-lg",
                   {
                     //сообщения от пользователя и чата будут иметь различный стиль
-                    "bg-green-200 text-gray-900":
+                    "bg-green-100 text-gray-900":
                       message.isUserMessage,
-                    "bg-amber-200 text-gray-900":
+                    "bg-amber-100 text-gray-900":
                       !message.isUserMessage,
                   }
                 )}
               >
+                {/* <p className={cn('px-4 py-2 rounded-lg', {})}></p> */}
                 <MarkdownLite text={message.text}/>
               </div>
             </div>
