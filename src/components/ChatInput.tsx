@@ -1,16 +1,26 @@
 "use client"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { FC, HTMLAttributes, useState } from "react"
+import { useMutation } from "@tanstack/react-query"
+import { FC, HTMLAttributes, useState, useContext, useRef } from "react"
 import { cn } from "@/lib/utils"
 import { Message } from "@/lib/validators/message"
 
+
 import { nanoid } from "nanoid"
 import TextareaAutosize from "react-textarea-autosize"
+import { MessagesContext } from "@/context/messagesContext"
 
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> {}
 
 const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
   const [input, setInput] = useState<string>("")
+  const {
+    messages,
+    addMessage,
+    removeMessage,
+    updateMessage,
+    isMessageUpdating,
+    setIsMessageUpdating } = useContext(MessagesContext)
+  const textAreaRef = useRef<null | HTMLTextAreaElement>(null)
 
   const {
     mutate: sendMessage,
@@ -18,14 +28,13 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
     isError,
     error,
   } = useMutation({
-
     mutationFn: async (message: Message) => {
       const response = await fetch("/api/message", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ messages: [message] }),
+        body: JSON.stringify({ messages: messages }),
       })
       if (response.ok) return response.body
     },
@@ -35,26 +44,50 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
     },
 
     onSuccess: async (stream) => {
-      const decoder =new TextDecoder()
-      const reader = stream!.getReader()
-      while(true) {
-        const {done, value} =await reader.read()
-        if(done) {
+      if (!stream) return console.error("No stream found!")
+
+      //принят ответ чат бота надо создать сообщение для нашего чата
+      //присвоение id
+      const id = nanoid()
+      const responseMessage: Message = {
+        id,
+        isUserMessage: false,
+        text: "",
+      }
+
+      addMessage(responseMessage)
+      setIsMessageUpdating(true)
+
+      const decoder = new TextDecoder()
+      const reader = stream.getReader()
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) {
           break
         }
-        console.log(decoder.decode(value))
+        //декодируя чанки добавляем их в текст сообщения бота
+        const textChunk = decoder.decode(value)
+        updateMessage(id, (prevText) => prevText + textChunk)
       }
-      setInput("")
-    },
 
+      //после загрузки сообщения целиком
+      setIsMessageUpdating(false)
+      setInput("")
+
+      setTimeout(() => {
+        textAreaRef.current?.focus
+      }, 10)
+    },
   })
 
   return (
     <div className={cn("border-t border-zinc-300 ", className)} {...props}>
 
       <div className="relative mt-4 overflow-hidden rounded-lg border-none outline-none">
-
         <TextareaAutosize
+          ref={textAreaRef}
+          disabled={isMessageUpdating}
           rows={2}
           maxRows={4}
           autoFocus
@@ -75,6 +108,7 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
               }
 
               sendMessage(message)
+              addMessage(message)
             }
 
           }}

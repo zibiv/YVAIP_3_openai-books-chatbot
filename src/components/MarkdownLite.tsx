@@ -1,3 +1,4 @@
+//компонент рендерит контент сообщения используя разметку
 import { FC } from "react"
 
 interface MarkdownLiteProps {
@@ -5,7 +6,7 @@ interface MarkdownLiteProps {
 }
 
 const MarkdownLite: FC<MarkdownLiteProps> = ({ text }) => {
-  return <div>MarkdownLite</div>
+  return <div>{text}</div>
 }
 
 export default MarkdownLite

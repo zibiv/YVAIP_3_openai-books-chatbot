@@ -17,9 +17,10 @@ const ChatMessages: FC<ChatMessagesProps> = ({ className, ...props }) => {
     setIsMessageUpdating } = useContext(MessagesContext)
   
   //сообщения идут от самого старого, к самому новому, для рендеринга нам надо поменять все местами и начинать с самых свежих сообщений
-  const invertedMessages = [...messages].reverse();
+  const invertedMessages = messages;
 
   //TODO зачем делать двойной реверс списка сообщений?
+  //TODO исправить зазор между сообщениями
   return (
     <div
       className={cn(
@@ -28,21 +29,23 @@ const ChatMessages: FC<ChatMessagesProps> = ({ className, ...props }) => {
       )}
       {...props}
     >
-      <div className="flex-1">
+      <div className="messagesFromChatMessages flex-1 space-y-2">
         {invertedMessages.map((message) => (
           <div key={message.id} className="chat-message">
             <div
               className={cn("flex items-center", {
+                //сообщения от пользователя будут находится в крайнем правом положении
                 "justify-end": message.isUserMessage,
               })}
             >
               <div
                 className={cn(
-                  "flex flex-col space-y-2 text-sm max-w-xs mx-2 overflow-x-hidden rounded-lg p-2",
+                  "flex flex-col  text-sm max-w-sm mx-2 overflow-x-hidden rounded-lg p-2",
                   {
-                    "bg-green-600 text-white":
+                    //сообщения от пользователя и чата будут иметь различный стиль
+                    "bg-green-200 text-gray-900":
                       message.isUserMessage,
-                    "bg-blue-200 text-gray-900":
+                    "bg-amber-200 text-gray-900":
                       !message.isUserMessage,
                   }
                 )}
