@@ -49,7 +49,6 @@ const ChatMessages: FC<ChatMessagesProps> = ({ className, ...props }) => {
                   }
                 )}
               >
-                {/* <p className={cn('px-4 py-2 rounded-lg', {})}></p> */}
                 <MarkdownLite text={message.text}/>
               </div>
             </div>

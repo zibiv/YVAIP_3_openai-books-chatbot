@@ -12,36 +12,46 @@ const MarkdownLite: FC<MarkdownLiteProps> = ({ text }) => {
   const linkRegex = /\[(.+?)\]\((.+?)\)/g
   const parts = []
 
+  //индекс на котором находится последний элемент найденной разметки ссылки
   let lastIndex = 0
   let match
 
-  console.log(text)
-
-  // TODO при обновлении сообщения этот компонент вызывается несколько раз, что приведет к вызову этого цикла так же несколько раз если в тексте будет ссылка в данном формате, можно прокинуть сюда состояние обновления сообщения, если оно перестало обновляться то вызывать цикл
+  //В цикле для каждого совпадения добавлются две части в массив под названием parts: часть свойства text до ссылки (если есть) и саму ссылку в виде элемента JSX, 
+  //обернутого в тег <a> с соответствующими атрибутами. В цикле также обновляется переменная lastIndex, чтобы отслеживать, 
+  //где закончилось последнее совпадение.
   while ((match = linkRegex.exec(text)) !== null) {
-      
-      const [fullMatch, linkText, linkUrl] = match
-      const matchStart = match.index //это индекс с которого началось совпадение с regex в строке
-      const matchEnd = linkRegex.lastIndex//индекс на котором закончилась строка совпадающая с regex
-      if(lastIndex < matchStart) {
-        parts.push(text.slice(lastIndex, matchStart))
-        // parts.push(<a href={linkUrl} target="_blank" className="text-gray-500">{linkText}</a>)
-        // parts.push(text.slice(matchEnd,text.length))
-      }
-      //так как этот чат эксперементальный ссылка находится за пределами нашего домена, поэтому используется <a>, а не <Link/>
-      parts.push(<a rel="noopener noreferrer" href={linkUrl} target="_blank" className="text-green-500 hover:text-green-700">{linkText}</a>)
-      //обновляем индекс последнего совпадения, если у нас будет несколько ссылок в сообщении
-      
-      lastIndex = matchEnd
+    //получаем массив в котором нас интересует значения двух групп захвата из текста который совпадает с искомым regex
+    const [fullMatch, linkText, linkUrl] = match
+
+    const matchStart = match.index //это индекс с которого началось совпадение с regex в строке
+    const matchEnd = linkRegex.lastIndex //индекс на котором закончилась строка совпадающая с regex
+
+    if (lastIndex < matchStart) {
+      parts.push(text.slice(lastIndex, matchStart))
+    }
+    
+    //так как этот чат эксперементальный ссылка находится за пределами нашего домена, поэтому используется <a>, а не <Link/>
+    parts.push(
+      <a
+        rel="noopener noreferrer"
+        href={linkUrl}
+        target="_blank"
+        className="text-green-500 hover:text-green-700"
+      >
+        {linkText}
+      </a>
+    )
+
+    lastIndex = matchEnd
   }
 
-  //оставшийся текст после последней ссылки добавляется в массив
-  if(lastIndex < text.length) {
+  //остались ли какие-либо части свойства text после последней ссылки. Если да, то он добавляет их в массив parts.
+  if (lastIndex < text.length) {
     parts.push(text.slice(lastIndex))
   }
-  
-  const textResult = parts.length > 0 || text
-  return <div>{parts.length > 0 ? parts.map(part => part) : text}</div>
+
+  //компонент возвращает элемент <div>, содержащий либо массив parts (если он не пуст), либо исходное свойство text (если ссылки не были найдены).
+  return <div>{parts.length > 0 ? parts.map((part) => part) : text}</div>
 }
 
 export default MarkdownLite

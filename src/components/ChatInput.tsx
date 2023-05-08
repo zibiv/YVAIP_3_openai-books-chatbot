@@ -8,6 +8,8 @@ import { Message } from "@/lib/validators/message"
 import { nanoid } from "nanoid"
 import TextareaAutosize from "react-textarea-autosize"
 import { MessagesContext } from "@/context/messagesContext"
+import Loader from "./ui/Loader"
+import { CornerDownLeft } from "lucide-react"
 
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -41,6 +43,7 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
 
     onMutate: (message) => {
       //оптимистическое добавление сообщения пользователя
+      //TODO убрать сообщение в случае неудачной отправки или отсутствия ответа со стороны API
       addMessage(message)
 
     },
@@ -88,13 +91,13 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
     },
   })
 
+  //TODO если очень частно посылать сообщения то isLoading будет бесконечен и мы не сможем вводить сообщения, прийдется перезагружать страницу
   return (
     <div className={cn("border-t border-zinc-300 ", className)} {...props}>
-
       <div className="relative mt-4 overflow-hidden rounded-lg border-none outline-none">
         <TextareaAutosize
           ref={textAreaRef}
-          disabled={isMessageUpdating}
+          disabled={isLoading}
           rows={2}
           maxRows={4}
           autoFocus
@@ -103,7 +106,6 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-
             //сообщение отправляется при нажатии одной клавиши enter, без нажатого шифта.
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault()
@@ -115,15 +117,21 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
               }
 
               sendMessage(message)
-
             }
-
           }}
+        />
+
+        <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5 items-end">
+          <kbd className="inline-flex items-center rounded border bg-white border-gray-200 px-1 font-sans text-sx text-gray-400 shadow-sm h-6 w-6">
+            {isLoading ? <Loader />  : <CornerDownLeft className="w-3 h-3"/>}
+          </kbd>
+        </div>
+        <div
+          className="absolute inset-x-0 bottom-0 border-t border-gray-200 peer-focus:border-t-2 peer-focus:border-t-green-200"
+          aria-hidden="true"
         />
       </div>
     </div>
-
   )
 }
-
 export default ChatInput
