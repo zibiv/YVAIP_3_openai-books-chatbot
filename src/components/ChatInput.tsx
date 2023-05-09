@@ -84,9 +84,8 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
       setIsMessageUpdating(false)
       setInput("")
 
-      //FIXME не фокусируется на инпуте
       setTimeout(() => {
-        textAreaRef.current?.focus
+        textAreaRef.current?.focus()
       }, 10)
     },
   })
