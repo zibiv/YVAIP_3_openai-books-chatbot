@@ -49,13 +49,12 @@ const ChatMessages: FC<ChatMessagesProps> = ({ className, ...props }) => {
                   }
                 )}
               >
-                <MarkdownLite text={message.text}/>
+                <MarkdownLite key={message.id} text={message.text}/>
               </div>
             </div>
           </div>
         ))}
       </div>
-      ChatMessages
     </div>
   )
 }

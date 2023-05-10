@@ -10,6 +10,7 @@ import TextareaAutosize from "react-textarea-autosize"
 import { MessagesContext } from "@/context/messagesContext"
 import Loader from "./ui/Loader"
 import { CornerDownLeft } from "lucide-react"
+import { toast } from "react-hot-toast"
 
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -31,25 +32,39 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
     error,
   } = useMutation({
     mutationFn: async (message: Message) => {
+      const reqController = new AbortController()
+      const timeout = setTimeout(() => reqController.abort(), 30000);
+
       const response = await fetch("/api/message", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
         body: JSON.stringify({ messages: messages }),
+        signal: reqController.signal
       })
+      
+      clearTimeout(timeout);
+
       if (response.ok) return response.body
+      throw new Error('С ответом сервера что то не так.')
     },
 
     onMutate: (message) => {
       //оптимистическое добавление сообщения пользователя
-      //TODO убрать сообщение в случае неудачной отправки или отсутствия ответа со стороны API
       addMessage(message)
-
     },
 
-    onError: () => {
-      console.log("Error")
+    onError: (error: Error, message) => {
+      if(error.name === "AbortError") {
+        //TODO сделать тосты чуть подольше
+        toast.error("Время ожидания ответа нашего сервера превышено. Попробуйте перезагрузить страницу или отправьте запрос позже.")
+      } else {
+        toast.error(error.message + " Обратитесь к администратору")
+      }
+      
+      removeMessage(message.id)
+      textAreaRef.current?.focus()
     },
 
     onSuccess: async (stream) => {
@@ -114,12 +129,17 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
                 isUserMessage: true,
                 text: input,
               }
+              
+              if (!navigator.onLine) {
+                toast.error("Вы находитесь офлайн, отправить сообщение боту не получится, проверьте свое соединение")
+              }
 
               sendMessage(message)
             }
           }}
         />
 
+        {/* TODO отправка по нажатию на значок */}
         <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5 items-end">
           <kbd className="inline-flex items-center rounded border bg-white border-gray-200 px-1 font-sans text-sx text-gray-400 shadow-sm h-6 w-6">
             {isLoading ? <Loader />  : <CornerDownLeft className="w-3 h-3"/>}

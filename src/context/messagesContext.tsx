@@ -42,7 +42,7 @@ export const MessagesArea: FC<{children: ReactNode}> = ({children}) => {
 
   //добавление сообщения пользователя происходит оптиместически, если что то пойдет не так сообщение надо удалить по id
   const removeMessage: MessageContextType["removeMessage"] = (id) => {
-    setMessages(messages.filter((message) => message.id !== id)) //❌
+    setMessages(messages.filter((message) => message.id !== id))
   }
 
   //обновление сообщения когда мы получаем данные из OpenAI, данные будут постпуать по паре букв, таким образом их надо добавлять к имеющемуся сообщению, что бы получить целую строку
