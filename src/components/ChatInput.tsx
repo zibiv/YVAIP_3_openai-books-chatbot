@@ -25,6 +25,8 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
     setIsMessageUpdating } = useContext(MessagesContext)
   const textAreaRef = useRef<null | HTMLTextAreaElement>(null)
 
+  const toasterErrorId = "toasterErrorId"
+
   const {
     mutate: sendMessage,
     isLoading,
@@ -57,8 +59,9 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
 
     onError: (error: Error, message) => {
       if(error.name === "AbortError") {
-        //TODO сделать тосты чуть подольше
-        toast.error("Время ожидания ответа нашего сервера превышено. Попробуйте перезагрузить страницу или отправьте запрос позже.")
+        toast.error("Время ожидания ответа нашего сервера превышено. Попробуйте перезагрузить страницу или отправьте запрос позже.", {
+          duration: 10000
+        })
       } else {
         toast.error(error.message + " Обратитесь к администратору")
       }
@@ -105,7 +108,23 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
     },
   })
 
-  //TODO если очень частно посылать сообщения то isLoading будет бесконечен и мы не сможем вводить сообщения, прийдется перезагружать страницу
+  //функция формирования и передачи сообщения на отправку, используется по нажатию ввода + нажатию на значок клавиши в input сообщения 
+  function handleSendingMessage() {
+    //предотвращение отправки пустых сообщений, вывод оповещения в одном "тосте"
+    if (input.trim() === "") return toast.error("Вы отправили пустое сообщение... Напишите что-то.", { id: toasterErrorId })
+    const message = {
+      id: nanoid(),
+      isUserMessage: true,
+      text: input,
+    }
+    
+    if (!navigator.onLine) {
+      toast.error("Вы находитесь офлайн, отправить сообщение боту не получится, проверьте свое соединение")
+    }
+
+    sendMessage(message)
+  }
+
   return (
     <div className={cn("border-t border-zinc-300 ", className)} {...props}>
       <div className="relative mt-4 overflow-hidden rounded-lg border-none outline-none">
@@ -124,25 +143,14 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault()
 
-              const message = {
-                id: nanoid(),
-                isUserMessage: true,
-                text: input,
-              }
-              
-              if (!navigator.onLine) {
-                toast.error("Вы находитесь офлайн, отправить сообщение боту не получится, проверьте свое соединение")
-              }
-
-              sendMessage(message)
+              handleSendingMessage()
             }
           }}
         />
 
-        {/* TODO отправка по нажатию на значок */}
         <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5 items-end">
           <kbd className="inline-flex items-center rounded border bg-white border-gray-200 px-1 font-sans text-sx text-gray-400 shadow-sm h-6 w-6">
-            {isLoading ? <Loader />  : <CornerDownLeft className="w-3 h-3"/>}
+            {isLoading ? <Loader />  : <CornerDownLeft className="w-3 h-3 cursor-pointer" onClick={handleSendingMessage}/>}
           </kbd>
         </div>
         <div

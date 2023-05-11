@@ -8,18 +8,11 @@ import MarkdownLite from "./MarkdownLite"
 interface ChatMessagesProps extends HTMLAttributes<HTMLDivElement> {}
 
 const ChatMessages: FC<ChatMessagesProps> = ({ className, ...props }) => {
-  const {
-    messages,
-    addMessage,
-    removeMessage,
-    updateMessage,
-    isMessageUpdating,
-    setIsMessageUpdating } = useContext(MessagesContext)
+  const { messages } = useContext(MessagesContext)
   
   //сообщения идут от самого старого, к самому новому, для рендеринга нам надо поменять все местами и начинать с самых свежих сообщений
   const invertedMessages = messages;
 
-  //TODO зачем делать двойной реверс списка сообщений?
   return (
     <div
       className={cn(
