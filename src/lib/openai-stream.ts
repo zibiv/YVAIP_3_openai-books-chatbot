@@ -1,5 +1,4 @@
 import {createParser, ParsedEvent, ReconnectInterval} from 'eventsource-parser'
-import { parse } from 'path';
 
 //тип описывающий кто является автором сообщения 
 export type ChatGPTAgent = "user" | "system" | "assistant"

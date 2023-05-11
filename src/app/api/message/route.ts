@@ -4,13 +4,12 @@ import { ChatGPTMessage, OpenAIStream, OpenAIStreamInterface } from "@/lib/opena
 import { MessageArray } from "@/lib/validators/message"
 
 import rateLimit from "@/utils/rate-limit"
-import { NextApiResponse } from "next"
 
 const limiter = rateLimit({
   interval: 60 * 1000, // 60 секунд 
 })
 
-export async function POST(req: Request, res: NextApiResponse) {
+export async function POST(req: Request) {
   const { messages } = await req.json()
 
   try {
