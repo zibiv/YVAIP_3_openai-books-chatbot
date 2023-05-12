@@ -3,8 +3,8 @@ import { answers } from "@/helpers/constants/tooManyReq";
 export function APILimiterStream() {
   const encoder = new TextEncoder()
   const indexForAnswer = Math.floor(Math.random() * answers.length)
-  //используем рандомный индекс для получения ответа из массива ответов бота
-  const botAnswer = answers[indexForAnswer]
+  //используем рандомный индекс для получения ответа из массива ответов бота и ставим сигнал о том что поток сгенерирован нашим сервером
+  const botAnswer = "💛" + answers[indexForAnswer]
 
   const stream = new ReadableStream({
     async start(controller) {

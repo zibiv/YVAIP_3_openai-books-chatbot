@@ -18,7 +18,7 @@ export default function rateLimit(options?: Options) {
       new Promise<void>((resolve, reject) => {
         //пытаемся получить из кэша значение для этого токена
         const tokenCount = (tokenCache.get(token) as number[]) ?? [0]
-        console.log((tokenCache.dump()))
+
         if (tokenCount[0] === 0) tokenCache.set(token, tokenCount)
 
         //увеличиваем кол-во полученных запросов по этому токену

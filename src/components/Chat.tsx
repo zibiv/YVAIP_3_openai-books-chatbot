@@ -12,6 +12,7 @@ import ChatInput from "./ChatInput"
 import ChatMessages from "./ChatMessages"
 
 const Chat: FC = () => {
+  const [statusLight, setStatusLight] = useState<"green"|"yellow">("green")
   const [isDragging, setIsDragging] = useState(false)
   const [startY, setStartY] = useState(0)
   const [height, setHeight] = useState(320) // начальная высота чата
@@ -22,7 +23,6 @@ const Chat: FC = () => {
   }, [])
 
   const handleMouseMove = useCallback((event: MouseEvent) => {
-    console.log("🤓", height)
     if (isDragging) {
       //высота считается с верхней части окна вниз, если мы уменьшили размер окна то дельта будет положительной
       const deltaY = event.clientY - startY
@@ -57,22 +57,20 @@ const Chat: FC = () => {
     setStartY(event.clientY)
   }
 
-  //FIXME убрать подсветку при свернутом чате
-  
   return (
     <Accordion type="single" collapsible className=" z-50 shadow-sm fixed right-8 w-80 bottom-8 bg-white border border-gray-200 rounded-md overflow-hidden">
       <AccordionItem value="item-1">
-        <div className="top_dragger border-t-2 cursor-row-resize rounded-sm hover:border-t-green-200 " onMouseDown={handleMouseDown}/>
         <div className="flex flex-col">
         <AccordionContent >
+            <div className="top_dragger border-t-2 cursor-row-resize rounded-sm hover:border-t-green-200 " onMouseDown={handleMouseDown}/>
             <div className="flex flex-col" style={{ height }}> 
               <ChatMessages className="px-2 py-3 flex-1" />
-              <ChatInput className="px-4" />
+              <ChatInput className="px-4" {...{statusLight, setStatusLight}}/>
             </div>
           </AccordionContent>
           {/* нижняя часть чата которая остается когда чат сворачивается */}
           <AccordionTrigger className="px-6 border-b border-zinc-300" onClick={() => setHeight(320)} >
-            <ChatHeader />
+            <ChatHeader statusLight={statusLight}/>
           </AccordionTrigger>
         </div>
       </AccordionItem>
