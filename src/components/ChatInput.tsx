@@ -1,6 +1,6 @@
 "use client"
 import { useMutation } from "@tanstack/react-query"
-import { FC, HTMLAttributes, useState, useContext, useRef } from "react"
+import { FC, HTMLAttributes, useState, useContext, useRef, Dispatch, SetStateAction } from "react"
 import { cn } from "@/lib/utils"
 import { Message } from "@/lib/validators/message"
 
@@ -12,9 +12,12 @@ import Loader from "./ui/Loader"
 import { CornerDownLeft } from "lucide-react"
 import { toast } from "react-hot-toast"
 
-interface ChatInputProps extends HTMLAttributes<HTMLDivElement> {}
+interface ChatInputProps extends HTMLAttributes<HTMLDivElement> {
+  statusLight: "green" | "yellow",
+  setStatusLight: Dispatch<SetStateAction<"green" | "yellow">>
+}
 
-const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
+const ChatInput: FC<ChatInputProps> = ({ className, statusLight, setStatusLight, ...props }) => {
   const [input, setInput] = useState<string>("")
   const {
     messages,
@@ -95,7 +98,15 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
         }
         //декодируя чанки добавляем их в текст сообщения бота
         const textChunk = decoder.decode(value)
-        updateMessage(id, (prevText) => prevText + textChunk)
+        //💛 обозначает что ответ посылает наш сервер,а не передает ответ от OpenAI, меняем статус чата и ставим таймер что бы уведомить пользователя о том что он может продолжать общение с AI
+        if(textChunk === "💛" ) {
+          if( statusLight === "green"){
+            setStatusLight("yellow")
+            setTimeout(()=>setStatusLight("green"), 58000)
+          }
+        } else {
+          updateMessage(id, (prevText) => prevText + textChunk)
+        }
       }
 
       //после загрузки сообщения целиком
